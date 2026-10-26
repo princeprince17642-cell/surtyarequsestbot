@@ -22,7 +22,7 @@ def keep_alive():
     t.daemon = True
     t.start()
 
-# --- नया Bot Token और तेरी Admin ID ---
+# --- तेरा Bot Token और Admin ID ---
 BOT_TOKEN = "8801462651:AAG7eRpvmGNtfdzNymPSu74tJ09BjvhTcwE"
 ADMIN_ID = 8343576029                   
 USERS_FILE = "users.json"
@@ -200,7 +200,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(f"👋 Hello {user_name}! Bot is active.")
 
-# --- 3. /setwelcome कमांड ---
+# --- 3. /setwelcome कमांड (फॉरवर्डेड मैसेज भी सपोर्ट करेगा) ---
 async def set_welcome_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
@@ -208,12 +208,17 @@ async def set_welcome_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     if message.reply_to_message:
         source_msg = message.reply_to_message
         welcome_data = {}
+        
         if source_msg.text:
             welcome_data = {"type": "text", "text": source_msg.text, "entities": [e.to_dict() for e in source_msg.entities] if source_msg.entities else []}
         elif source_msg.photo:
             welcome_data = {"type": "photo", "file_id": source_msg.photo[-1].file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
         elif source_msg.document:
             welcome_data = {"type": "document", "file_id": source_msg.document.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
+        elif source_msg.video:
+            welcome_data = {"type": "document", "file_id": source_msg.video.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
+        elif source_msg.audio:
+            welcome_data = {"type": "document", "file_id": source_msg.audio.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
         elif source_msg.voice:
             welcome_data = {"type": "voice", "file_id": source_msg.voice.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
 
@@ -222,13 +227,13 @@ async def set_welcome_command(update: Update, context: ContextTypes.DEFAULT_TYPE
             w_list.append(welcome_data)
             with open(WELCOME_MSG_FILE, "w", encoding="utf-8") as f:
                 json.dump(w_list, f, ensure_ascii=False)
-            await message.reply_text(f"✨ Join Welcome सीक्वेंस में जोड़ दिया गया!\n📊 कुल मैसेज: {len(w_list)}")
+            await message.reply_text(f"✨ (फॉरवर्डेड सहित) Join Welcome सीक्वेंस में जोड़ दिया गया!\n📊 कुल मैसेज: {len(w_list)}")
         else:
             await message.reply_text("❌ रिप्लाई किए गए मैसेज में टेक्स्ट, फोटो, फाइल या वॉइस नोट होना चाहिए।")
     else:
         await message.reply_text("❌ किसी मैसेज पर रिप्लाई करके /setwelcome लिखें।")
 
-# --- 4. /setstart कमांड ---
+# --- 4. /setstart कमांड (फॉरवर्डेड मैसेज भी सपोर्ट करेगा) ---
 async def set_start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
@@ -236,12 +241,17 @@ async def set_start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if message.reply_to_message:
         source_msg = message.reply_to_message
         start_data = {}
+        
         if source_msg.text:
             start_data = {"type": "text", "text": source_msg.text, "entities": [e.to_dict() for e in source_msg.entities] if source_msg.entities else []}
         elif source_msg.photo:
             start_data = {"type": "photo", "file_id": source_msg.photo[-1].file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
         elif source_msg.document:
             start_data = {"type": "document", "file_id": source_msg.document.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
+        elif source_msg.video:
+            start_data = {"type": "document", "file_id": source_msg.video.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
+        elif source_msg.audio:
+            start_data = {"type": "document", "file_id": source_msg.audio.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
         elif source_msg.voice:
             start_data = {"type": "voice", "file_id": source_msg.voice.file_id, "caption": source_msg.caption or "", "caption_entities": [e.to_dict() for e in source_msg.caption_entities] if source_msg.caption_entities else []}
 
@@ -250,7 +260,7 @@ async def set_start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             s_list.append(start_data)
             with open(START_MSG_FILE, "w", encoding="utf-8") as f:
                 json.dump(s_list, f, ensure_ascii=False)
-            await message.reply_text(f"✨ Start सीक्वेंस में जोड़ दिया गया!\n📊 कुल मैसेज: {len(s_list)}")
+            await message.reply_text(f"✨ (फॉरवर्डेड सहित) Start सीक्वेंस में जोड़ दिया गया!\n📊 कुल मैसेज: {len(s_list)}")
         else:
             await message.reply_text("❌ रिप्लाई किए गए मैसेज में टेक्स्ट, फोटो, फाइल या वॉइस नोट होना चाहिए।")
     else:
@@ -324,7 +334,7 @@ async def handle_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
         save_user(user.id)
         user_name = user.full_name
         username = f"@{user.username}" if user.username else "कोई यूजरनेम नहीं"
-        forward_header = f"📩 नया मैसेज आया है!\n👤 नाम: {user_name}\n🔗 यूजरनेम: {username}\n🆔 User ID: {user.id}\n-------------------\n"
+        forward_header = f"📩 नया मैसेज आया है!\n👤 नाम: {user_name}\n🔗 यूजरनेम: {username}\n🆔 User ID: {user.id}\n------------------سن\n"
         
         try:
             if message.text:
@@ -347,10 +357,4 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("setwelcome", set_welcome_command))
     app.add_handler(CommandHandler("setstart", set_start_command))
-    app.add_handler(CommandHandler("clearwelcome", clear_welcome_command))
-    app.add_handler(CommandHandler("clearstart", clear_start_command))
-    app.add_handler(CommandHandler("broadcast", broadcast))
-    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, handle_messages))
-
-    print("Bot started successfully...")
-    app.run_polling(drop_pending_updates=True, allowed_updates=Update.ALL_TYPES)
+    app.add_handler(CommandHandler(
