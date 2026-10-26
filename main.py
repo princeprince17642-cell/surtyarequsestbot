@@ -334,7 +334,7 @@ async def handle_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
         save_user(user.id)
         user_name = user.full_name
         username = f"@{user.username}" if user.username else "कोई यूजरनेम नहीं"
-        forward_header = f"📩 नया मैसेज आया है!\n👤 नाम: {user_name}\n🔗 यूजरनेम: {username}\n🆔 User ID: {user.id}\n------------------سن\n"
+        forward_header = f"📩 नया मैसेज आया है!\n👤 नाम: {user_name}\n🔗 यूजरनेम: {username}\n🆔 User ID: {user.id}\n-------------------\n"
         
         try:
             if message.text:
@@ -357,4 +357,10 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("setwelcome", set_welcome_command))
     app.add_handler(CommandHandler("setstart", set_start_command))
-    app.add_handler(CommandHandler(
+    app.add_handler(CommandHandler("clearwelcome", clear_welcome_command))
+    app.add_handler(CommandHandler("clearstart", clear_start_command))
+    app.add_handler(CommandHandler("broadcast", broadcast))
+    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, handle_messages))
+
+    print("Bot started successfully...")
+    app.run_polling(drop_pending_updates=True, allowed_updates=Update.ALL_TYPES)
